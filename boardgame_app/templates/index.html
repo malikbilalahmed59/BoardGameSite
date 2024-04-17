@@ -1,0 +1,76 @@
+<!-- your_project_name/your_app_name/templates/index.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café GameFinder</title>
+    <!-- Include your CSS files here -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+<body>
+    <header>
+        <h1>Café GameFinder</h1>
+        <nav>
+            <a href="{% url 'index' %}">Home</a>
+            
+            {% if user.is_authenticated %}
+                {% if user.cafe %}
+                    <!-- Display cafe-specific links for cafe owners -->
+                    <a href="{% url 'cafe_profile' %}">Cafe Profile</a>
+                {% else %}
+                    <!-- Display user-specific links for regular users -->
+                    <a href="{% url 'profile' %}">Profile</a>
+                    <a href="{% url 'reserve' %}">Reserve</a>
+                {% endif %}
+                <a href="{% url 'logout' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            {% else %}
+                <!-- Show these links if the user is not logged in -->
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'user_register' %}">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <!-- Home Page Section -->
+    <section id="home">
+        <h2>Welcome to Café GameFinder</h2>
+        <p>
+            Café GameFinder is your go-to platform for discovering cafes that offer board games. Whether you're a
+            board game enthusiast or just looking for a cozy spot to enjoy your favorite games with friends,
+            Café GameFinder has you covered. Explore our listings, make reservations, and elevate your café
+            experience.
+        </p>
+        {% if user.is_authenticated %}
+            <!-- Show reservation link only if the user is a regular user -->
+            {% if not user.cafe %}
+                <p>
+                    Make a reservation now and embark on a journey of board game fun!
+                    <a href="{% url 'reserve' %}">Make a reservation</a>
+                </p>
+            {% endif %}
+        {% endif %}
+    </section>
+
+    <section id="games">
+        <h2>Available Games</h2>
+        <ul>
+            {% for game in games %}
+                <li>{{ game.name }} at {{ game.location }} - {{ game.time }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <script src="{% static 'script.js' %}"></script>
+    <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+        {% csrf_token %}
+    </form>
+    <footer>
+        <p>&copy; 2023 Café GameFinder. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

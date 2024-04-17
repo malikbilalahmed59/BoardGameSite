@@ -1,0 +1,101 @@
+<!-- your_project_name/your_app_name/templates/index.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café GameFinder</title>
+    <!-- Include your CSS files here -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+<body>
+    <header>
+        <h1>Café GameFinder</h1>
+        <nav>
+            <a href="{% url 'cafe_owner' %}">Home</a>
+
+            {% if user.is_authenticated %}
+                {% if user.cafe %}
+                    <!-- Display cafe-specific links for cafe owners -->
+                    <a href="{% url 'cafe_profile' %}">Cafe Profile</a>
+                {% else %}
+                    <!-- Display user-specific links for regular users -->
+                    <a href="{% url 'profile' %}">Profile</a>
+                    <a href="{% url 'reserve' %}">Reserve</a>
+                {% endif %}
+                <a href="{% url 'logout' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            {% else %}
+                <!-- Show these links if the user is not logged in -->
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'user_register' %}">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <!-- Home Page Section -->
+    <section id="home">
+       <h2>Welcome to Your Game Handling Page</h2>
+        <p>
+            Welcome to your personalized game handling page. This platform is designed for cafe owners and staff to manage
+            the games available at your cafe. Whether you're adding new games, updating existing ones, or handling reservations,
+            this page has everything you need to enhance your cafe's gaming experience.
+        </p>
+
+
+    </section>
+
+    <section id="games">
+        <h2> <a href="{% url 'add_game' %}" class="btn btn-primary">Create New Game</a></h2>
+        <h2>Your Games</h2>
+        <!-- Display all games with edit and delete buttons -->
+<div class="container">
+    <div class="d-flex flex-wrap">
+        {% for game in games %}
+            <div class="card mb-3 mx-3" style="width: 30rem;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ game.name }}</h5>
+                    <p class="card-text">Description: {{ game.description }}</p>
+                    <p class="card-text">Location: {{ game.location }}</p>
+                    <p class="card-text">Time: {{ game.time }}</p>
+                    <p class="card-text">Available Slots: {{ game.available_slots }}</p>
+                    <!-- Edit button -->
+                    <a href="{% url 'edit_game' game.id %}" class="btn btn-primary">Edit</a>
+                    <!-- Delete button -->
+                    <a href="{% url 'delete_game' game.id %}" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
+</div>
+
+
+
+
+    </section>
+
+    <script src="{% static 'script.js' %}"></script>
+    <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+        {% csrf_token %}
+    </form>
+    <footer>
+        <p>&copy; 2023 Café GameFinder. All rights reserved.</p>
+    </footer>
+</body>
+
+<!-- Include Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
+
+<!-- Include Bootstrap Datepicker CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+<!-- Include Bootstrap JS and jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+
+<!-- Include Bootstrap Datepicker JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+</html>

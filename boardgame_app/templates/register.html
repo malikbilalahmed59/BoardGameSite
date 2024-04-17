@@ -1,0 +1,65 @@
+<!-- your_project_name/your_app_name/templates/register.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Café GameFinder</title>
+    <!-- Include your CSS files here -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+
+<body>
+ <header>
+        <h1>Café GameFinder</h1>
+        <nav>
+            <a href="{% url 'index' %}">Home</a>
+            
+            {% if user.is_authenticated %}
+                <!-- Show these links if the user is logged in -->
+                <a href="{% url 'profile' %}">Profile</a>
+                <a href="{% url 'reserve' %}">Reserve</a>
+                <a href="{% url 'cafe_profile' %}">Cafe Profile</a>
+                <a href="{% url 'logout' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+    Logout
+</a>
+            {% else %}
+                <!-- Show these links if the user is not logged in -->
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'user_register' %}">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <section id="register-form">
+        <h2>Register</h2>
+        <form method="post" action="{% url 'user_register' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <!-- Additional fields for cafe owners -->
+            {% if not user.is_authenticated %}
+    <div class="form-group">
+        <label for="{{ form.is_cafe_owner.id_for_label }}">Register as Cafe Owner:</label>
+        {{ form.is_cafe_owner }}
+    </div>
+{% endif %}
+            
+            <!-- Add more fields specific to cafe owners if needed -->
+
+            <button type="submit">Register</button>
+        </form>
+    </section>
+
+    <script src="{% static 'script.js' %}"></script>
+<form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+    {% csrf_token %}
+</form>
+    <footer>
+        <p>&copy; 2023 Café GameFinder. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
