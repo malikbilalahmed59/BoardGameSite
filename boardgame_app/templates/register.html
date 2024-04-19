@@ -35,6 +35,18 @@
     </header>
 
     <section id="register-form" class="container mt-5">
+        {% if form.errors %}
+        <div class="alert alert-danger mt-3" role="alert">
+            <h4 class="alert-heading">Form Errors:</h4>
+            <ul class="mb-0">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
         <h2>Register</h2>
         <form method="post" action="{% url 'user_register' %}" class="needs-validation" novalidate>
             {% csrf_token %}
@@ -42,11 +54,6 @@
                 <div class="form-group">
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                     {{ field }}
-                    {% for error in field.Errors %}
-                        <div class="invalid-feedback">
-                            {{ error }}
-                        </div>
-                    {% endfor %}
                 </div>
             {% endfor %}
 
@@ -62,6 +69,9 @@
 
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
+
+        <!-- Display form errors in a danger alert -->
+
     </section>
 
     <!-- Include Bootstrap JS -->

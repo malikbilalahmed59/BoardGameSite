@@ -159,16 +159,17 @@ def register(request):
                 messages.success(request, 'Account created successfully! Please log in.')
                 # Redirect to the login or home page
                 return redirect('index')
-        else:
-            # Display form errors to the user
-            print("Form errors:", form.errors)
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'{field}: {error}')
-            return redirect('user_register')
     else:
         form = CustomUserCreationForm()
+
+    # Display form errors to the user (if any)
+    print("Form errors:", form.errors)
+    for field, errors in form.errors.items():
+        for error in errors:
+            messages.error(request, f'{field}: {error}')
+
     return render(request, 'register.html', {'form': form})
+
 
 
 # def user_register(request):
