@@ -135,7 +135,6 @@ def user_logout(request):
 
 from django.contrib import messages
 
-
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -162,6 +161,7 @@ def register(request):
                 return redirect('index')
         else:
             # Display form errors to the user
+            print("Form errors:", form.errors)
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'{field}: {error}')
