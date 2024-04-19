@@ -50,20 +50,8 @@
         <h2>Register</h2>
         <form method="post" action="{% url 'user_register' %}" class="needs-validation" novalidate>
             {% csrf_token %}
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                </div>
-            {% endfor %}
+             {{ form.as_p }}
 
-            <!-- Additional fields for cafe owners -->
-            {% if not user.is_authenticated %}
-                <div class="form-group">
-                    <label for="{{ form.is_cafe_owner.id_for_label }}">Register as Cafe Owner:</label>
-                    {{ form.is_cafe_owner }}
-                </div>
-            {% endif %}
 
             <!-- Add more fields specific to cafe owners if needed -->
 
