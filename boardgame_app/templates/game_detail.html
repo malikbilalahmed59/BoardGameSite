@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ game.name }} - Café GameFinder</title>
+    <!-- Include your CSS files here -->
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<style>
+    form {
+        display: flex; /* Use flexbox */
+        flex-direction: column; /* Stack items vertically */
+        align-items: flex-start; /* Align items to the start */
+        margin: 10px; /*
+    }
+</style>
+<body>
+    <header>
+        <h1>Café GameFinder</h1>
+        <nav>
+            <a href="{% url 'index' %}">Home</a>
+
+            {% if user.is_authenticated %}
+                <!-- Show these links if the user is logged in -->
+                <a href="{% url 'profile' %}">Profile</a>
+                <a href="{% url 'reserve' %}">Reserve</a>
+                <a href="{% url 'cafe_profile' %}">Cafe Profile</a>
+                <a href="{% url 'logout' %}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    Logout
+                </a>
+            {% else %}
+                <!-- Show these links if the user is not logged in -->
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'user_register' %}">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <h2>{{ game.name }}</h2>
+    <p>Description: {{ game.description }}</p>
+    <p>Location: {{ game.location }}</p>
+    <p>Time: {{ game.time }}</p>
+    <p>Available Slots: {{ game.available_slots }}</p>
+    <p>Average Rating: {{ game.average_rating }}</p>
+    <ul>
+        {% for review in game.reviews.all %}
+            <li>{{ review.user.username }} - Rating: {{ review.rating }} - {{ review.comment }}</li>
+        {% endfor %}
+    </ul>
+
+    {% if request.user.is_authenticated %}
+        {% if not user_review %}
+            <form method="post">
+                {% csrf_token %}
+                <label for="rating">Your Rating (1-5):</label>
+                <input type="number" id="rating" name="rating" min="1" max="5" required>
+                <label for="comment">Your Comment:</label>
+                <textarea id="comment" name="comment" required></textarea>
+                <button type="submit">Submit Review</button>
+            </form>
+        {% else %}
+            <p>You have already reviewed this game.</p>
+        {% endif %}
+    {% endif %}
+
+    <script src="{% static 'script.js' %}"></script>
+    <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+        {% csrf_token %}
+    </form>
+
+    <footer>
+        <p>&copy; 2023 Café GameFinder. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

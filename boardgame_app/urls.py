@@ -4,7 +4,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import LoginView, LogoutView
 from .views import index, profile, reserve, cafe_profile, user_login, user_logout, CustomLoginView, register, add_game, \
-    edit_game, delete_game
+    edit_game, delete_game, game_detail
 
 urlpatterns = [
     path('', index, name='index'),
@@ -24,6 +24,7 @@ urlpatterns = [
     path('add_game/', add_game, name='add_game'),
     path('edit_game/<int:game_id>/', edit_game, name='edit_game'),
     path('delete_game/<int:game_id>/', delete_game, name='delete_game'),
+    path('game/<int:game_id>/', game_detail, name='game_detail'),
 
 ]
 

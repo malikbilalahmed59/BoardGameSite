@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -5,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.utils import timezone  # Add this line
-from .models import Game, Reservation, Cafe, User
+from .models import Game, Reservation, Cafe, User, GameReview
 from .forms import ReservationForm, CafeProfileForm, CustomUserCreationForm, GameForm
 
 
@@ -17,7 +18,44 @@ def index(request):
 
     # Retrieve all games if the user is not staff
     games = Game.objects.all()
+    # for game in games:
+    #     print("Game ID:", game.id)
+    #     print("Name:", game.name)
+    #     print("Description:", game.description)
+    #     print("Location:", game.location)
+    #     print("Time:", game.time)
+    #     print("Available Slots:", game.available_slots)
+    #     print("Average Rating:", game.average_rating)
+    #     print("Total Ratings:", game.total_ratings)
     return render(request, 'index.html', {'games': games})
+
+
+@login_required
+def game_detail(request, game_id):
+    game = get_object_or_404(Game, pk=game_id)
+
+    # Check if the user has already reviewed the game
+    user_review = GameReview.objects.filter(user=request.user, game=game).exists()
+
+    if request.method == 'POST':
+        rating = int(request.POST.get('rating'))
+        comment = request.POST.get('comment')
+
+        # Only allow users to review the game if they haven't already reviewed it
+        if not user_review:
+            GameReview.objects.create(user=request.user, game=game, rating=rating, comment=comment)
+            game.total_ratings += 1
+            game.average_rating = (game.average_rating * (game.total_ratings - 1) + rating) / game.total_ratings
+            game.save()
+            return redirect('index')
+        else:
+            # Optionally, you can display a message here indicating that the user has already reviewed the game
+            return HttpResponse("You have already reviewed this game.")
+
+    return render(request, 'game_detail.html', {'game': game, 'user_review': user_review})
+
+
+
 
 
 @login_required
@@ -116,7 +154,7 @@ def register(request):
                     messages.error(request, 'An error occurred while creating cafe profile. Please try again later.')
                     # Log the exception for further investigation
                     print("Error creating cafe profile:", e)
-                    return redirect('register')
+                    return redirect('user_register')
             else:
                 user.save()
                 messages.success(request, 'Account created successfully! Please log in.')
@@ -127,7 +165,7 @@ def register(request):
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'{field}: {error}')
-            return redirect('register')
+            return redirect('user_register')
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})

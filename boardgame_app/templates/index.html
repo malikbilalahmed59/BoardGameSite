@@ -9,8 +9,33 @@
     <title>Café GameFinder</title>
     <!-- Include your CSS files here -->
     <link rel="stylesheet" href="{% static 'styles.css' %}">
-</head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+</head>
+<style>
+<style>
+        .rating-list li {
+          float: right;
+          color: #ddd;
+          padding: 10px 5px;
+        }
+
+        .rating-list li:hover,
+        .rating-list li:hover ~ li {
+          color: orange;
+        }
+
+        .rating-list {
+          display: flex;
+          list-style: none;
+        }
+        .checked {
+            color: orange;
+        }
+    </style>
+    </style>
 <body>
     <header>
         <h1>Café GameFinder</h1>
@@ -59,7 +84,33 @@
         <h2>Available Games</h2>
         <ul>
             {% for game in games %}
-                <li>{{ game.name }} at {{ game.location }} - {{ game.time }}</li>
+                <li>
+                    <h3>{{ game.name }}</h3>
+                    <p>Description: {{ game.description }}</p>
+                    <p>Location: {{ game.location }}</p>
+                    <p>Time: {{ game.time }}</p>
+                    <p>Average Rating: {{ game.average_rating }}</p>
+                    <p>Total Ratings: {{ game.total_ratings }}</p>
+                    <ul class="list-flex rating-list">
+                        <li>
+                            <i class="fa fa-star {% if game.average_rating >= 1 %}checked{% endif %}" title="Rate 1"></i>
+                        </li>
+                        <li>
+                            <i class="fa fa-star {% if game.average_rating >= 2 %}checked{% endif %}" title="Rate 2"></i>
+                        </li>
+                        <li>
+                            <i class="fa fa-star {% if game.average_rating >= 3 %}checked{% endif %}" title="Rate 3"></i>
+                        </li>
+                        <li>
+                            <i class="fa fa-star {% if game.average_rating >= 4 %}checked{% endif %}" title="Rate 4"></i>
+                        </li>
+                        <li>
+                            <i class="fa fa-star {% if game.average_rating >= 5 %}checked{% endif %}" title="Rate 5"></i>
+                        </li>
+                    </ul>
+                    <!-- Link to game detail page -->
+<a href="{% url 'game_detail' game.id %}" class="btn btn-primary">View Details</a>
+                </li>
             {% endfor %}
         </ul>
     </section>
@@ -72,5 +123,6 @@
         <p>&copy; 2023 Café GameFinder. All rights reserved.</p>
     </footer>
 </body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 </html>

@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User, AbstractUser  # Move this import here
 from django.utils import timezone
@@ -13,6 +14,9 @@ class Game(models.Model):
     location = models.CharField(max_length=255)
     time = models.DateTimeField()
     available_slots = models.IntegerField(default=0)
+    # Add field to store ratings
+    average_rating = models.DecimalField(default=0, max_digits=3, decimal_places=2)
+    total_ratings = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -36,3 +40,11 @@ class Cafe(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class GameReview(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='reviews')
+    rating = models.PositiveIntegerField(default=0, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
